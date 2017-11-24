@@ -51,3 +51,8 @@ var YammeBell = Type("YammeBell", func() {
 	Required("hello")
 })
 ```
+
+
+## TODO:
+
+- [] Support MediaTypes
