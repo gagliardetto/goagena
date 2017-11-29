@@ -12,6 +12,7 @@ func main() {
 }
 
 // User is the object that defines a user
+//goagena:mediatype
 type User struct {
 	ID uuid.UUID
 

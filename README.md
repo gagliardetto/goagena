@@ -55,4 +55,5 @@ var YammeBell = Type("YammeBell", func() {
 
 ## TODO:
 
-- [ ] Support MediaTypes
+- [x] Support Types
+- [x] Support MediaTypes

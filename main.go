@@ -8,6 +8,7 @@ import (
 	"unicode"
 
 	. "github.com/dave/jennifer/jen"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gagliardetto/goagena/scanner"
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
 )
@@ -39,6 +40,7 @@ func main() {
 		//spew.Dump(pk.Structs)
 		for _, str := range pk.Structs {
 
+			spew.Dump(str.Doc)
 			f.AddSimpleTypeFromStruct(str)
 
 			// Check whether the struct has a
@@ -69,7 +71,12 @@ func (d *DesignFile) String() string {
 }
 
 func (d *DesignFile) AddSimpleTypeFromStruct(str *scanner.Struct) {
-	typeAttributes := newSimpleGoaType(str.Name)
+	var typeAttributes []Code
+	if IsMediaType(str.Doc) {
+		typeAttributes = newGoaMediaType(str.Name)
+	} else {
+		typeAttributes = newSimpleGoaType(str.Name)
+	}
 
 	attributes := make([]Code, 0)
 
@@ -103,9 +110,16 @@ func (d *DesignFile) AddSimpleTypeFromStruct(str *scanner.Struct) {
 
 	typeAttributes = append(typeAttributes, fff)
 
-	d.ff.Var().Id(str.Name).Op("=").Id("Type").Call(
-		typeAttributes...,
-	)
+	if IsMediaType(str.Doc) {
+		d.ff.Var().Id(str.Name).Op("=").Id("MediaType").Call(
+			typeAttributes...,
+		)
+	} else {
+		d.ff.Var().Id(str.Name).Op("=").Id("Type").Call(
+			typeAttributes...,
+		)
+	}
+
 }
 
 func NewAttributesBlock(attributes []Code) *Statement {
@@ -182,6 +196,13 @@ func newSimpleGoaType(name string) []Code {
 	return typeAttributes
 }
 
+func newGoaMediaType(name string) []Code {
+	typeAttributes := make([]Code, 0)
+	name = fmt.Sprintf("application/vnd.%s+json", toLowerSnakeCase(name))
+	typeAttributes = append(typeAttributes, Lit(name))
+	return typeAttributes
+}
+
 func typeToGoaType(t string) string {
 	switch t {
 	case "string":
@@ -222,4 +243,15 @@ func toLowerSnakeCase(s string) string {
 
 func toUpperSnakeCase(s string) string {
 	return strings.ToUpper(toLowerSnakeCase(s))
+}
+
+// IsMediaType returns true in case the user specified a comment on the
+// struct to convert it to a MediaType.
+func IsMediaType(doc []string) bool {
+	for _, v := range doc {
+		if strings.HasPrefix(v, "goagena:mediatype") {
+			return true
+		}
+	}
+	return false
 }
