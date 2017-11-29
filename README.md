@@ -9,6 +9,12 @@ go get github.com/gagliardetto/goagena
 go install github.com/gagliardetto/goagena
 ```
 
+### How it works
+
+`goagena` will scan the whole package looking for structs, and will convert them by default
+to `Type`. If you want to convert a struct to a `MediaType`, add `goagena:mediatype` to the comment
+of the struct.
+
 ### Examples
 
 ```
