@@ -38,7 +38,7 @@ var Address = Type("Address", func() {
 
 	Required("cap", "city")
 })
-var User = Type("User", func() {
+var User = MediaType("application/vnd.user+json", func() {
 	Attribute("id", UUID)
 	Attribute("username", String)
 	Attribute("email", String)
@@ -56,6 +56,7 @@ var YammeBell = Type("YammeBell", func() {
 
 	Required("hello")
 })
+
 ```
 
 
