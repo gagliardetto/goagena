@@ -8,7 +8,6 @@ import (
 	"unicode"
 
 	. "github.com/dave/jennifer/jen"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gagliardetto/goagena/scanner"
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
 )
@@ -40,7 +39,7 @@ func main() {
 		//spew.Dump(pk.Structs)
 		for _, str := range pk.Structs {
 
-			spew.Dump(str.Doc)
+			//spew.Dump(str.Doc)
 			f.AddSimpleTypeFromStruct(str)
 
 			// Check whether the struct has a
